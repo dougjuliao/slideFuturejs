@@ -1,0 +1,2 @@
+# slideFuturejs
+Slideshow jQuery plugin
