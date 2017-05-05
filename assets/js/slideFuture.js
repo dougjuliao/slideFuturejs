@@ -5,6 +5,23 @@
 		@github : https://github.com/dougjuliao
     	*/
     	const _THIS = this;
+
+        /*
+            Effects animate css
+            bounce     | bounceIn       | fadeIn         | fadeOutDown     | flipOutX          | rotateOutDownLeft  | zoomInLeft   | slideInRight
+            flash      | bounceInDown   | fadeInDown     | fadeOutDownBig  | flipOutY          | rotateOutDownRight | zoomInRight  | slideInUp
+            pulse      | bounceInLeft   | fadeInDownBig  | fadeOutLeft     | lightSpeedIn      | rotateOutUpLeft    | zoomInUp     | slideOutDown
+            rubberBand | bounceInRight  | fadeInLeft     | fadeOutLeftBig  | lightSpeedOut     | rotateOutUpRight   | zoomOut      | slideOutLeft
+            shake      | bounceInUp     | fadeInLeftBig  | fadeOutRight    | rotateIn          | hinge              | zoomOutDown  | slideOutRight
+            headShake  | bounceOut      | fadeInRight    | fadeOutRightBig | rotateInDownLeft  | jackInTheBox       | zoomOutLeft  | slideOutUp
+            swing      | bounceOutDown  | fadeInRightBig | fadeOutUp       | rotateInDownRight | rollIn             | zoomOutRight |
+            tada       | bounceOutLeft  | fadeInUp       | fadeOutUpBig    | rotateInUpLeft    | rollOut            | zoomOutUp    |
+            wobble     | bounceOutRight | fadeInUpBig    | flipInX         | rotateInUpRight   | zoomIn             | slideInDown  |
+            jello      | bounceOutUp    | fadeOut        | flipInY         | rotateOut         | zoomInDown         | slideInLeft  |
+        */
+        const effectIn  = 'fadeInDown';
+        const effectOut = 'fadeOutDown';
+
     	const ElementsToHTML = {  // ADICIONAR ELEMENTOS AO HTML
     		addFutureClass: () => {
     			_THIS.addClass('future-class');
@@ -17,7 +34,7 @@
 	    		for(let i = 0; i < slides.length; i++){
 	    			html += `
 	    				<div class="future-container-img">
-	    					<img class="future-img ${i == 0 ? 'future-active' : ''}" data-img="image-${i}" data-id="${i}" src="${slides[i].image}" alt="future image ${i}">
+	    					<img class="future-img animated ${i == 0 ? 'future-active '+effectIn : ''}" data-img="image-${i}" data-id="${i}" src="${slides[i].image}" alt="future image ${i}">
 	    				</div>
 	    				`;
 
@@ -44,19 +61,26 @@
 
         const SlideFuture = {
             recursiveAnimate: (images,count) => { // GERA ANIMACAO DEFAULT RECURSIVA
-                $('.future-navigation li, .future-container-img img').removeClass('future-active');
-                $('[data-img="image-'+count+'"]').addClass('future-active');
+                $('.future-navigation li, .future-container-img img').removeClass('future-active '+effectIn+' '+effectOut);
+                $('[data-img="image-'+count+'"]').addClass('future-active '+effectIn);
 
                 prevSlide    =  images[(count > 0 ? count - 1 : images.length - 1)];
                 currentSlide =  images[count];
                 nextSlide    =  images[(count == images.length-1 ? 0 : count + 1)];
 
-                $(images[count]).animate({ opacity: 1 },{ duration: 3000, easing: "linear"})
-                .delay(2000)
-                .animate({ opacity: 0 },{ duration: 400, easing: "linear", complete: function(){
+                const recallCount = () =>{
                     count = count < images.length - 1 ? count + 1 : 0;
                     SlideFuture.recursiveAnimate(images,count);
+                };
+                $(images[count])/*.css({ opacity: 1 })*/.animate({ opacity: 1 },{ duration: 3000, easing: "linear", complete:function(){
+                    $('.future-navigation li, .future-container-img img').removeClass('future-active '+effectIn+' '+effectOut);
+                    $('[data-img="image-'+count+'"]').addClass(effectOut);
+                }})
+                .delay(800)
+                .animate({ opacity: 0 },{ duration: 100, easing: "linear", complete: function(){
+                    recallCount();
                 }});
+
             },
             eventClickNav: (event,images,id) => {
                 event.preventDefault();
