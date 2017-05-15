@@ -32,13 +32,15 @@
                     prevNext = '';
 
 	    		for(let i = 0; i < slides.length; i++){
+                    let futureActive = i == 0 ? 'future-active ' : '';
 	    			html += `
 	    				<div class="future-container-img">
-	    					<img class="future-img animated ${i == 0 ? 'future-active '+effectIn : ''}" data-img="image-${i}" data-id="${i}" src="${slides[i].image}" alt="future image ${i}">
-	    				</div>
+	    					<div data-img="image-${i}" data-id="${i}" class="future-caption ${futureActive}">${slides[i].caption}</div>
+                            <img class="future-img animated effectIn ${futureActive}" data-img="image-${i}" data-id="${i}" src="${slides[i].image}" alt="future image ${i}">
+                        </div>
 	    				`;
 
-                    nav += `<li data-img="image-${i}" data-id="${i}" class="future-nav-li ${i == 0 ? 'future-active' : ''}"><span></span></li>`;
+                    nav += `<li data-img="image-${i}" data-id="${i}" class="future-nav-li ${futureActive}"><span></span></li>`;
 	    		}
                 prevNext = `
                     <div class="future-prev">➾</div>
@@ -62,6 +64,7 @@
         const SlideFuture = {
             recursiveAnimate: (images,count) => { // GERA ANIMACAO DEFAULT RECURSIVA
                 $('.future-navigation li, .future-container-img img').removeClass('future-active '+effectIn+' '+effectOut);
+                $('[data-img="image-'+count+'"]').removeClass('future-active '+effectIn+' '+effectOut);
                 $('[data-img="image-'+count+'"]').addClass('future-active '+effectIn);
 
                 prevSlide    =  images[(count > 0 ? count - 1 : images.length - 1)];
@@ -74,6 +77,7 @@
                 };
                 $(images[count])/*.css({ opacity: 1 })*/.animate({ opacity: 1 },{ duration: 3000, easing: "linear", complete:function(){
                     $('.future-navigation li, .future-container-img img').removeClass('future-active '+effectIn+' '+effectOut);
+                    $('[data-img="image-'+count+'"]').removeClass('future-active '+effectIn+' '+effectOut);
                     $('[data-img="image-'+count+'"]').addClass(effectOut);
                 }})
                 .delay(800)
